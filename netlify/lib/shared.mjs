@@ -2,11 +2,11 @@ const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL |
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
 
 export function json(statusCode, payload) {
-  return { statusCode, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(payload) };
+  return new Response(JSON.stringify(payload), { status: statusCode, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
 }
 
-export async function authenticate(event) {
-  const header = event.headers?.authorization || event.headers?.Authorization || '';
+export async function authenticate(req) {
+  const header = req.headers.get('authorization') || '';
   const token = header.replace(/^Bearer\s+/i, '').trim();
   if (!token) throw new Error('Please sign in again. Your secure session token is missing.');
   if (!supabaseUrl || !supabaseAnonKey) throw new Error('Server authentication is not configured. Add SUPABASE_URL and SUPABASE_ANON_KEY in Netlify environment variables.');

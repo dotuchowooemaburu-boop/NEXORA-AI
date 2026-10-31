@@ -1,12 +1,12 @@
-import { authenticate, json, supabaseRequest, firstMediaUrl } from './_shared.mjs';
+import { authenticate, json, supabaseRequest, firstMediaUrl } from '../lib/shared.mjs';
 
-export async function handler(event) {
-  if (event.httpMethod === 'OPTIONS') return json(200, { ok: true });
-  if (event.httpMethod !== 'GET') return json(405, { error: 'Method not allowed.' });
+export default async function handler(req) {
+  if (req.method === 'OPTIONS') return json(200, { ok: true });
+  if (req.method !== 'GET') return json(405, { error: 'Method not allowed.' });
   try {
-    const auth = await authenticate(event);
+    const auth = await authenticate(req);
     if (!process.env.FAL_KEY) return json(503, { error: 'FAL_KEY is not configured on the server.' });
-    const requestId = event.queryStringParameters?.request_id;
+    const requestId = new URL(req.url).searchParams.get('request_id');
     if (!requestId) return json(400, { error: 'Missing request_id.' });
     const rows = await supabaseRequest(auth, `generation_jobs?request_id=eq.${encodeURIComponent(requestId)}&select=*`);
     const job = rows?.[0];
