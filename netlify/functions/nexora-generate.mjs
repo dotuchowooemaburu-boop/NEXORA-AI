@@ -1,4 +1,4 @@
-import { authenticate, json, supabaseRequest } from './_shared.mjs';
+import { authenticate, json, supabaseRequest } from '../lib/shared.mjs';
 
 const MODEL_DEFAULTS = {
   image: 'fal-ai/flux/dev',
@@ -34,13 +34,13 @@ function buildInput(task, body) {
   throw new Error('This generation task is not supported.');
 }
 
-export async function handler(event) {
-  if (event.httpMethod === 'OPTIONS') return json(200, { ok: true });
-  if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed.' });
+export default async function handler(req) {
+  if (req.method === 'OPTIONS') return json(200, { ok: true });
+  if (req.method !== 'POST') return json(405, { error: 'Method not allowed.' });
   try {
-    const auth = await authenticate(event);
+    const auth = await authenticate(req);
     if (!process.env.FAL_KEY) return json(503, { error: 'The AI media engine is not configured yet. Add FAL_KEY to Netlify environment variables. The key stays on the server.' });
-    const body = JSON.parse(event.body || '{}');
+    const body = JSON.parse((await req.text()) || '{}');
     const task = String(body.task || '');
     const allowed = ['image','image_edit','image_remove_bg','video','video_image','music','sfx','voice','transcribe'];
     if (!allowed.includes(task)) return json(400, { error: 'Choose a supported AI generation task.' });

@@ -46,7 +46,7 @@ Defaults are defined in `netlify/functions/nexora-generate.mjs` and can be overr
 - `FAL_MUSIC_MODEL` / `FAL_SFX_MODEL` — `fal-ai/stable-audio-25/text-to-audio`
 - `FAL_TTS_MODEL` — `fal-ai/maya`
 - `FAL_STT_MODEL` — `fal-ai/speech-to-text`
-- `GEMINI_MODEL` — `gemini-2.5-flash`
+- `GEMINI_MODEL` — `gemini-flash-latest`
 
 Model access, exact input schema, availability and price can change at the provider. If you override a model, confirm its endpoint and input fields in the provider model documentation.
 
